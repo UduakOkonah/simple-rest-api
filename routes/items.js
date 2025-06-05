@@ -1,59 +1,40 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-let items = require('../data');
+const store = require("../data");
 
-// GET /items - Get all items
-router.get('/', (req, res) => {
-  res.json(items);
+// GET /items
+router.get("/", (req, res) => {
+  res.json(store.getItems());
 });
 
-// GET /items/:id - Get single item by ID
-router.get('/:id', (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id));
-  if (!item) return res.status(404).json({ error: 'Item not found' });
+// GET /items/:id
+router.get("/:id", (req, res) => {
+  const item = store.getItem(parseInt(req.params.id));
+  if (!item) return res.status(404).json({ error: "Item not found" });
   res.json(item);
 });
 
-// POST /items - Create new item
-router.post('/', (req, res) => {
-  const { id, name, description } = req.body;
-  if (!id || !name || !description) {
-    return res.status(400).json({ error: 'id, name, and description required' });
-  }
-
-  const exists = items.find(i => i.id === id);
-  if (exists) {
-    return res.status(400).json({ error: 'Item with this ID already exists' });
-  }
-
-  const newItem = { id, name, description };
-  items.push(newItem);
+// POST /items
+router.post("/", (req, res) => {
+  const { name, description } = req.body;
+  if (!name || !description) return res.status(400).json({ error: "Missing fields" });
+  const newItem = store.addItem({ name, description });
   res.status(201).json(newItem);
 });
 
-// PUT /items/:id - Update item
-router.put('/:id', (req, res) => {
-  const { name, description } = req.body;
-  const item = items.find(i => i.id === parseInt(req.params.id));
-  if (!item) return res.status(404).json({ error: 'Item not found' });
-
-  if (!name || !description) {
-    return res.status(400).json({ error: 'name and description required' });
-  }
-
-  item.name = name;
-  item.description = description;
-  res.json(item);
+// PUT /items/:id
+router.put("/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const updated = store.updateItem(id, req.body);
+  if (!updated) return res.status(404).json({ error: "Item not found" });
+  res.json(updated);
 });
 
-// DELETE /items/:id - Delete item
-router.delete('/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const index = items.findIndex(i => i.id === id);
-  if (index === -1) return res.status(404).json({ error: 'Item not found' });
-
-  items.splice(index, 1);
-  res.json({ message: 'Item deleted successfully' });
+// DELETE /items/:id
+router.delete("/:id", (req, res) => {
+  const deleted = store.deleteItem(parseInt(req.params.id));
+  if (!deleted) return res.status(404).json({ error: "Item not found" });
+  res.json(deleted);
 });
 
 module.exports = router;
