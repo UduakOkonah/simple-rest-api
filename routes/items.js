@@ -1,45 +1,75 @@
+// routes/items.js
 const express = require('express');
 const router = express.Router();
-const { getItems, getItem, addItem, updateItem, deleteItem } = require('../data');
+const {
+  getItems,
+  getItem,
+  addItem,
+  updateItem,
+  deleteItem,
+} = require('../data');
 
-// Get all items
+// GET all items
 router.get('/', (req, res) => {
   res.json(getItems());
 });
 
-// Get a single item by ID
+// GET single item
 router.get('/:id', (req, res) => {
   const id = parseInt(req.params.id);
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
   const item = getItem(id);
-  if (!item) return res.status(404).json({ message: 'Item not found' });
+  if (!item) {
+    return res.status(404).json({ error: 'Item not found' });
+  }
   res.json(item);
 });
 
-// Add a new item
+// POST new item
 router.post('/', (req, res) => {
-  const { name, description } = req.body;
-  if (!name || !description) {
-    return res.status(400).json({ message: 'Name and description are required' });
+  const { name } = req.body;
+  if (typeof name !== 'string' || name.trim().length === 0) {
+    return res.status(400).json({ error: 'Item "name" must be a non-empty string' });
   }
-  const newItem = addItem({ name, description });
+
+  const newItem = addItem({ name: name.trim() });
   res.status(201).json(newItem);
 });
 
-// Update an item
+// PUT update item
 router.put('/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const { name, description } = req.body;
-  const updated = updateItem(id, { name, description });
-  if (!updated) return res.status(404).json({ message: 'Item not found' });
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
+  const { name } = req.body;
+  if (typeof name !== 'string' || name.trim().length === 0) {
+    return res.status(400).json({ error: 'Item "name" must be a non-empty string' });
+  }
+
+  const updated = updateItem(id, { name: name.trim() });
+  if (!updated) {
+    return res.status(404).json({ error: 'Item not found' });
+  }
   res.json(updated);
 });
 
-// Delete an item
+// DELETE item
 router.delete('/:id', (req, res) => {
   const id = parseInt(req.params.id);
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
   const deleted = deleteItem(id);
-  if (!deleted) return res.status(404).json({ message: 'Item not found' });
-  res.json({ message: 'Item deleted successfully' });
+  if (!deleted) {
+    return res.status(404).json({ error: 'Item not found' });
+  }
+  res.status(204).send();
 });
 
 module.exports = router;

@@ -1,149 +1,161 @@
-# Simple REST API
-
-A simple REST API with full CRUD functionality using Express.js and an in-memory datastore.
-
-## 📦 Setup
-
-```bash
-npm install
-npm start
 # Simple REST API with Express.js
 
-This is a simple RESTful API built using Node.js and Express. It manages a list of items in-memory (no database).
+This is a simple RESTful API built using Express.js. It performs basic CRUD operations on an in-memory data store.
+
+## 📁 Project Structure
+
+```
+project/
+├── data.js              # In-memory CRUD logic
+├── index.js             # Main server and middleware
+├── routes/
+│   └── items.js         # RESTful route handlers (newly added)
+├── postman/             # Postman collection and test screenshots
+├── package.json         # Project metadata and dependencies
+└── README.md            # Project documentation
+```
 
 ---
 
-## 🚀 How to Run
+## 🚀 Getting Started
 
-1. **Clone the repository**  
-   ```bash
-   git https://github.com/UduakOkonah/simple-rest-api.git
-   cd simple-rest-api
+### Prerequisites
 
-2. Install dependencies
+* Node.js v14 or higher
+* npm (Node Package Manager)
+
+### Installation
+
+```bash
+git clone <your-repo-url>
+cd project-folder
 npm install
+```
 
-3. Start the server
+### Running the App
+
+```bash
 npm start
+```
 
-4. The server will start on http://localhost:3000
+Server will run at: `http://localhost:3000`
 
+---
 
-📬 API Endpoints
-All routes are prefixed with /items
+## 📡 API Endpoints
 
-🔹 GET /items
-Returns all items.
+All endpoints are under `/items`
 
-Example Response
+### GET `/items`
 
-json
+* Description: Retrieve all items
+* Response:
+
+```json
 [
-  {
-    "id": 1717600000000,
-    "name": "Notebook",
-    "description": "A college-ruled notebook"
-  }
+  { "id": 123, "name": "Item A" },
+  { "id": 124, "name": "Item B" }
 ]
+```
 
-🔹 GET /items/:id
-Returns a single item by ID.
+### GET `/items/:id`
 
-Example Response
+* Description: Get a specific item by ID
+* Success Response: `200 OK`
 
-json
-{
-  "id": 1717600000000,
-  "name": "Notebook",
-  "description": "A college-ruled notebook"
-}
+```json
+{ "id": 123, "name": "Item A" }
+```
 
-🔹 POST /items
-Adds a new item.
-Body Example
-json
+* Error Response: `404 Not Found`
 
-{
-  "name": "Pen",
-  "description": "Blue ink ballpoint pen"
-}
-Success Response
-json
+```json
+{ "error": "Item not found" }
+```
 
-{
-  "id": 1717600123456,
-  "name": "Pen",
-  "description": "Blue ink ballpoint pen"
-}
+### POST `/items`
 
-🔹 PUT /items/:id
-Updates an existing item.
+* Description: Add a new item
+* Request Body:
 
-Body Example
-json
+```json
+{ "name": "New Item" }
+```
 
-{
-  "name": "Red Pen",
-  "description": "Updated description"
-}
+* Success Response: `201 Created`
 
-Success Response
-json
+```json
+{ "id": 125, "name": "New Item" }
+```
 
-{
-  "id": 1717600123456,
-  "name": "Red Pen",
-  "description": "Updated description"
-}
+* Error Response: `400 Bad Request`
 
-🔹 DELETE /items/:id
-Deletes an item by ID.
+```json
+{ "error": "Item \"name\" is required" }
+```
 
-Success Response
-json
+### PUT `/items/:id`
 
-{
-  "message": "Item deleted successfully"
-}
+* Description: Update an item
+* Request Body:
 
-✅ Features
-Built with Express.js
+```json
+{ "name": "Updated Name" }
+```
 
-In-memory data storage (no DB needed)
+* Success Response: `200 OK`
 
-Fully RESTful: GET, POST, PUT, DELETE
+```json
+{ "id": 123, "name": "Updated Name" }
+```
 
-Clean code structure with routes separated
+* Error Response: `404 Not Found`
 
-Simple error handling
+```json
+{ "error": "Item not found" }
+```
 
-🔬 API Testing
-You can test the API using Postman, Thunder Client, or cURL.
-A Postman collection is included in the postman/ folder.
+### DELETE `/items/:id`
 
-📂 Folder Structure
-simple-rest-api/
-├── data.js
-├── index.js
-├── routes/
-│   └── items.js
-├── package.json
-├── README.md
-└── postman/
-    └── Simple_REST_API_Collection.postman_collection.json
+* Description: Delete an item by ID
+* Success Response: `204 No Content`
+* Error Response: `404 Not Found`
 
+```json
+{ "error": "Item not found" }
+```
 
-🛠 Future Improvements
-Add file/database storage
+---
 
-Add unit tests
+## 🧪 Testing with Postman
 
-Add Swagger UI documentation
+### Test Steps:
 
-Add authentication
+1. Import the `postman/collection.json` into Postman.
+2. Use the `localhost:3000` base URL.
+3. Run tests for:
 
-Screenshots of API tests are available in the /screenshots folder.
+   * GET `/items`
+   * POST `/items`
+   * GET `/items/:id`
+   * PUT `/items/:id`
+   * DELETE `/items/:id`
 
-👤 Author
-Built by Uduakobong Okonah.
-Feel free to contribute or suggest improvements.
+### Screenshots:
+
+See the `postman/screenshots/` folder for screenshots of successful test results.
+
+---
+
+## 🛠️ Future Improvements
+
+* Add persistent storage using a database (e.g., MongoDB).
+* Improve validation using libraries like Joi or Zod.
+* Add test scripts using Jest or Supertest.
+* Improve error messages and structure (e.g., standardized error codes).
+
+---
+
+## 📄 License
+
+MIT

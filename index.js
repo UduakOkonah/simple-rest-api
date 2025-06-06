@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
 const itemsRoutes = require('./routes/items');
+app.use('/items', itemsRoutes);
 
-app.use(express.json());
 
 // Root route
 app.get('/', (req, res) => {
